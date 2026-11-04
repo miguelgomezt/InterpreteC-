@@ -1,0 +1,19 @@
+// Variables: declaración, consulta y asignación.
+
+// Declaración con let
+let nombre = "Miguel";
+let edad = 20;
+let activo = true;
+
+// Consulta
+imprimir(nombre);        // Miguel
+imprimir(edad);          // 20
+imprimir(activo);        // true
+
+// Asignación: cambiar el valor de una variable que ya existe
+edad = edad + 1;
+imprimir(edad);          // 21
+
+// Una variable puede usarse para calcular otra
+let saludo = "Hola, " + nombre;
+imprimir(saludo);        // Hola, Miguel

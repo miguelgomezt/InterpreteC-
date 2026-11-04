@@ -1,0 +1,21 @@
+// Funciones integradas: imprimir, longitud, texto y entero.
+
+// imprimir: muestra un valor en la consola
+imprimir("Hola desde el intérprete");   // Hola desde el intérprete
+
+// longitud: tamaño de una cadena o de un arreglo
+imprimir(longitud("hola"));             // 4
+imprimir(longitud([10, 20, 30]));       // 3
+imprimir(longitud([]));                 // 0
+
+// texto: convierte un valor a cadena
+let edad = 21;
+imprimir("Tengo " + texto(edad) + " años");   // Tengo 21 años
+
+// entero: convierte una cadena a número
+let numero = entero("41");
+imprimir(numero + 1);                   // 42
+
+// Se pueden combinar
+let palabras = ["let", "if", "while"];
+imprimir("Hay " + texto(longitud(palabras)) + " palabras");   // Hay 3 palabras

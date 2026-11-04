@@ -1,0 +1,35 @@
+// Expresiones aritméticas, relacionales y lógicas, con precedencia y asociatividad.
+
+// Precedencia: * se evalúa antes que +
+imprimir(2 + 3 * 4);       // 14
+imprimir((2 + 3) * 4);     // 20  (los paréntesis cambian el orden)
+
+// Asociatividad izquierda: se agrupa de izquierda a derecha
+imprimir(10 - 4 - 3);      // 3   ((10 - 4) - 3)
+imprimir(10 / 2 * 5);      // 25  ((10 / 2) * 5)
+
+// Potencia: asociatividad derecha
+imprimir(2 ** 3 ** 2);     // 512 (2 ** (3 ** 2))
+
+// División entera y módulo
+imprimir(7 / 2);           // 3
+imprimir(10 % 3);          // 1
+
+// Operador prefijo
+imprimir(-5 + 2);          // -3
+
+// Relacionales
+imprimir(3 != 4);          // true
+imprimir(5 <= 5);          // true
+imprimir(3 >= 4);          // false
+
+// Lógicas
+imprimir(!true);           // false
+imprimir(!(5 == 5));       // false
+
+// Mezcla: la suma va antes que la comparación
+imprimir(1 + 2 * 3 > 6);   // true
+
+// + también concatena cadenas y arreglos
+imprimir("compi" + "ladores");  // compiladores
+imprimir([1, 2] + [3]);         // [1, 2, 3]
