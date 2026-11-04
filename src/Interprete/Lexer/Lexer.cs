@@ -2,30 +2,30 @@ namespace Interprete.Lexing;
 
 //Convierte el texto fuente en tokens, leyendo caracter por caracter.
 public class Lexer{
-     private readonly string_input; 
+     private readonly string _input; 
      private int _position;  //Posicion del caracter acutal
-     private int _readPosition //Siguiente posicion a leer
+     private int _readPosition; //Siguiente posicion a leer
      private char _ch; //caracter actual ('\0' = fin de la entrada)
      private int _line = 1; //Linea del caracter actual
      private int _column = 0; //Columna del caracter actual
 
      public Lexer(string input){
-        _input = input
+        _input = input;
         ReadChar();
      }
 
      //Devuelve el siguiente token de la entrada
-     prublic Token NextToken(){
+     public Token NextToken(){
         SkipWhitespaceAndComments();
 
         int line = _line; 
-        int column = _column
+        int column = _column;
 
         Token Make(TokenType type, string literal) => new(type, literal, line, column);
 
         Token token; 
         switch (_ch){
-            case '=';
+            case '=':
                 token = PeekChar() == '=' ? Make(TokenType.Eq, TwoChars()) : Make(TokenType.Assign, "=");
                 break;
             case '!':
@@ -63,18 +63,18 @@ public class Lexer{
             if (IsLetter(_ch))
             {
                 string ident = ReadIdentifier();
-                retunr Make(Keywords.Lookup(ident), ident);
+                return Make(Keywords.Lookup(ident), ident);
             }
             if (char.IsAsciiDigit(_ch))
             {
-                retunr Make (TokenType.Int, ReadNumber());
+                return Make (TokenType.Int, ReadNumber());
             }
-            token = Make(TokenType, Illegal, _ch.ToString());
+            token = Make(TokenType.Illegal, _ch.ToString());
             break;
         }
 
         ReadChar();
-        retunr token; 
+        return token; 
      }
 
      //Avanza un caracter y actualiza line y columna 

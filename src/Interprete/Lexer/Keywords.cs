@@ -1,4 +1,4 @@
-namespace Interprete.Lexing
+namespace Interprete.Lexing;
 
 //Palabras reservadas. Se leen como identificadores y luego se leen aquí. 
 
@@ -19,5 +19,5 @@ public static class Keywords
     };
 
     public static TokenType Lookup(string ident) =>
-    Map.TryGetValue(ident, out var type) ? type : TokenType.ident;
+    Map.TryGetValue(ident, out var type) ? type : TokenType.Ident;
 }

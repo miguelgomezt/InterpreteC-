@@ -9,12 +9,12 @@ public enum ErrorKind
 }
 
 //Error del interprete con su tipo y posición en el código fuente.
-public class InterpreterException : InterpreterException{
-    public ErrorKind Kinf { get; }
+public class InterpreterException : Exception{
+    public ErrorKind Kind { get; }
     public int Line { get; }
     public int Column { get; }
 
-    public InterpreterException(ErrorKind Kind, string message, int line = 0, int column = 0)
+    public InterpreterException(ErrorKind kind, string message, int line = 0, int column = 0)
     : base (message)
     {
         Kind = kind; 
@@ -24,13 +24,13 @@ public class InterpreterException : InterpreterException{
 
     public override string ToString()
     {
-        string etapa = Kind swtich
+        string etapa = Kind switch
         {
             ErrorKind.Lexico => "Error lexico",
             ErrorKind.Sintactico => "Error sintactico",
             _=> "Error de ejecucion"
         };
-        retunr Line > 0
+        return Line > 0
              ? $"{etapa} (línea {Line}, columna {Column}): {Message}"
             : $"{etapa}: {Message}";
     }

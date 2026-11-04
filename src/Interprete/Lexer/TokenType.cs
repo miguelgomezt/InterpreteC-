@@ -8,7 +8,7 @@ public enum TokenType{
     Ident, Int, String,
 
     //Opreadores 
-    Assing, Plus, Minus, Bang, Asterisk, Slash, Pow, 
+    Assign, Plus, Minus, Bang, Asterisk, Slash, Pow, 
     Mod, Lt, Gt, Eq, NotEq, Lte, Gte,
 
 
