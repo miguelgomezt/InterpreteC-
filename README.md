@@ -27,7 +27,7 @@ dotnet --version
 
 ```bash
 git clone https://github.com/miguelgomezt/InterpreteC-.git
-cd InterpreteLenguajesYCompiladores
+cd InterpreteC-
 dotnet build
 ```
 
