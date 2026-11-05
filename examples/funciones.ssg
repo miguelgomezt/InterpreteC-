@@ -1,0 +1,38 @@
+// Funciones: definición, llamada, return, recursión y funciones como valores.
+
+// Definir y llamar
+let suma = function(a, b) {
+    return a + b;
+};
+imprimir(suma(3, 4));                    // 7
+
+// Sin return: devuelve la última expresión del cuerpo
+let doble = function(x) { x * 2 };
+imprimir(doble(21));                     // 42
+
+// Recursión: cada llamada tiene su propio n
+let factorial = function(n) {
+    if (n <= 1) { return 1; }
+    return n * factorial(n - 1);
+};
+imprimir(factorial(5));                  // 120
+
+let fib = function(n) {
+    if (n <= 1) { return n; }
+    return fib(n - 1) + fib(n - 2);
+};
+imprimir(fib(10));                       // 55
+
+// return dentro de un ciclo sale de toda la función
+let primerMultiplo = function(desde, k) {
+    let i = desde;
+    while (true) {
+        if (i % k == 0) { return i; }
+        i = i + 1;
+    }
+};
+imprimir(primerMultiplo(10, 7));         // 14
+
+// Las funciones son valores: se pasan como argumento
+let aplicarDosVeces = function(f, x) { f(f(x)) };
+imprimir(aplicarDosVeces(doble, 3));     // 12

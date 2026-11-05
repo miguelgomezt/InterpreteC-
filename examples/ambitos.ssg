@@ -1,0 +1,47 @@
+// Ámbitos y closures.
+
+// 1. let dentro de una función crea una variable NUEVA (no toca la de afuera)
+let x = 1;
+let f = function() {
+    let x = 99;
+    imprimir(x);                         // 99
+};
+f();
+imprimir(x);                             // 1
+
+// 2. Asignar con = (sin let) modifica la variable de afuera
+let contador = 0;
+let incrementar = function() {
+    contador = contador + 1;
+};
+incrementar();
+incrementar();
+imprimir(contador);                      // 2
+
+// 3. Un parámetro tapa a una variable global con el mismo nombre
+let n = 100;
+let sumarUno = function(n) { n + 1 };
+imprimir(sumarUno(5));                   // 6
+imprimir(n);                             // 100
+
+// 4. Closure: la función recuerda el entorno donde nació
+let sumador = function(a) {
+    function(b) { a + b }
+};
+let mas10 = sumador(10);
+imprimir(mas10(5));                      // 15
+
+// 5. Cada closure guarda su propio estado
+let crearContador = function() {
+    let c = 0;
+    function() { c = c + 1; c }
+};
+let c1 = crearContador();
+let c2 = crearContador();
+c1();
+c1();
+imprimir(c1());                          // 3
+imprimir(c2());                          // 1
+
+// 6. Las variables locales no existen afuera de su función
+// imprimir(c);   → Error de ejecucion: variable no definida: c

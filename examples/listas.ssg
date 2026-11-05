@@ -1,0 +1,45 @@
+// Listas (arreglos) y diccionarios (hashes).
+
+let numeros = [10, 20, 30];
+imprimir(numeros);                       // [10, 20, 30]
+imprimir(numeros[0]);                    // 10
+imprimir(longitud(numeros));             // 3
+
+// Modificar una posición
+numeros[1] = 25;
+imprimir(numeros);                       // [10, 25, 30]
+
+// Concatenar con +
+let todos = numeros + [40, 50];
+imprimir(todos);                         // [10, 25, 30, 40, 50]
+
+// Recorrer con for
+let total = 0;
+for (let i = 0; i < longitud(todos); i = i + 1) {
+    total = total + todos[i];
+}
+imprimir(total);                         // 155
+
+// Función que recibe una lista
+let maximo = function(lista) {
+    let mayor = lista[0];
+    for (let i = 1; i < longitud(lista); i = i + 1) {
+        if (lista[i] > mayor) { mayor = lista[i]; }
+    }
+    return mayor;
+};
+imprimir(maximo([3, 9, 2, 7]));          // 9
+
+// Los arreglos se comparten por referencia
+let a = [1, 2, 3];
+let b = a;
+b[0] = 100;
+imprimir(a);                             // [100, 2, 3]
+
+// Diccionarios
+let persona = {"nombre": "Pola", "edad": 21};
+imprimir(persona["nombre"]);             // Pola
+persona["edad"] = 22;
+persona["ciudad"] = "Medellin";
+imprimir(persona);                       // {nombre: Pola, edad: 22, ciudad: Medellin}
+imprimir(persona["telefono"]);           // null
