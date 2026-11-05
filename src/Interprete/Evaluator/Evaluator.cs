@@ -64,11 +64,21 @@ public static class Evaluator
         IfExpr e         => EvalIf(e, env),
         WhileExpr e      => EvalWhile(e, env),
         ForExpr e        => EvalFor(e, env),
+        FunctionLiteral e => new FunctionValue(e.Parameters, e.Body, env),
+        CallExpr e        => EvalCall(e, env),
+        ArrayLiteral e    => new ArrayValue(e.Elements.Select(x => EvalExpr(x, env)).ToList()),
+        IndexExpr e       => EvalIndex(e, env),
+        HashLiteral e     => EvalHash(e, env),
         _ => throw Error(expr.Token, $"expresión no soportada: {expr.GetType().Name}")
     };
 
-    private static Value EvalIdentifier(Identifier id, Environment env) =>
-        env.Get(id.Value) ?? throw Error(id.Token, $"variable no definida: {id.Value}");
+        private static Value EvalIdentifier(Identifier id, Environment env)
+    {
+        var value = env.Get(id.Value);
+        if (value is not null) return value;
+        if (Builtins.All.TryGetValue(id.Value, out var builtin)) return builtin;
+        throw Error(id.Token, $"variable no definida: {id.Value}");
+    }
 
     private static Value EvalAssign(AssignExpr e, Environment env)
     {
@@ -78,6 +88,22 @@ public static class Evaluator
             if (!env.Assign(id.Value, value))
                 throw Error(id.Token, $"variable no definida: {id.Value}");
             return value;
+        }
+                if (e.Left is IndexExpr ix)
+        {
+            var target = EvalExpr(ix.Left, env);
+            var index = EvalExpr(ix.Index, env);
+            switch (target)
+            {
+                case ArrayValue arr when index is IntegerValue i:
+                    arr.Elements[CheckIndex(ix.Token, arr, i.Value)] = value;
+                    return value;
+                case HashValue hash:
+                    CheckHashable(ix.Token, index);
+                    hash.Pairs[index] = value;
+                    return value;
+            }
+            throw Error(ix.Token, $"no se puede asignar en {target.TypeName}[{index.TypeName}]");
         }
         throw Error(e.Token, "solo se puede asignar a una variable o a arr[i]");
     }
@@ -113,6 +139,79 @@ public static class Evaluator
             if (e.Update is not null) EvalExpr(e.Update, env);
         }
         return NullValue.Instance;
+    }
+
+        // ===== Funciones =====
+    private static Value EvalCall(CallExpr e, Environment env)
+    {
+        var function = EvalExpr(e.Function, env);
+        var args = e.Arguments.Select(a => EvalExpr(a, env)).ToList();
+
+        switch (function)
+        {
+            case FunctionValue f:
+                if (args.Count != f.Parameters.Count)
+                    throw Error(e.Token, $"se esperaban {f.Parameters.Count} argumentos y llegaron {args.Count}");
+
+                var callEnv = new Environment(f.Env);          // ámbito nuevo; su "afuera" es donde nació la función
+                for (int i = 0; i < args.Count; i++)
+                    callEnv.Define(f.Parameters[i].Value, args[i]);
+
+                var result = EvalBlock(f.Body, callEnv);
+                return result is ReturnValue r ? r.Inner : result;   // aquí se desenvuelve el return
+
+            case BuiltinValue b:
+                try { return b.Function(args); }
+                catch (InterpreterException ex) when (ex.Line == 0)
+                {
+                    throw Error(e.Token, ex.Message);           // le ponemos la posición de la llamada
+                }
+
+            default:
+                throw Error(e.Token, $"no es una función: {function.TypeName}");
+        }
+    }
+
+    // ===== Arreglos y hashes =====
+    private static Value EvalIndex(IndexExpr e, Environment env)
+    {
+        var left = EvalExpr(e.Left, env);
+        var index = EvalExpr(e.Index, env);
+
+        switch (left)
+        {
+            case ArrayValue arr when index is IntegerValue i:
+                return arr.Elements[CheckIndex(e.Token, arr, i.Value)];
+            case HashValue hash:
+                CheckHashable(e.Token, index);
+                return hash.Pairs.TryGetValue(index, out var v) ? v : NullValue.Instance;
+        }
+        throw Error(e.Token, $"no se puede indexar {left.TypeName} con {index.TypeName}");
+    }
+
+    private static Value EvalHash(HashLiteral e, Environment env)
+    {
+        var pairs = new Dictionary<Value, Value>();
+        foreach (var p in e.Pairs)
+        {
+            var key = EvalExpr(p.Key, env);
+            CheckHashable(p.Key.Token, key);
+            pairs[key] = EvalExpr(p.Value, env);
+        }
+        return new HashValue(pairs);
+    }
+
+    private static int CheckIndex(Token token, ArrayValue arr, long i)
+    {
+        if (i < 0 || i >= arr.Elements.Count)
+            throw Error(token, $"índice fuera de rango: {i} (tamaño {arr.Elements.Count})");
+        return (int)i;
+    }
+
+    private static void CheckHashable(Token token, Value key)
+    {
+        if (!HashValue.IsHashable(key))
+            throw Error(token, $"no se puede usar {key.TypeName} como clave");
     }
 
     // ===== Operadores =====
