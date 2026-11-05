@@ -128,9 +128,4 @@ Usamos Claude (asistente de IA) como apoyo para:
 - Escribimos pruebas automáticas (`dotnet test`) con entradas válidas y entradas con error.
 - Comparamos los resultados de los programas de ejemplo con los del intérprete del proyecto base.
 - Revisamos el código entre nosotros (revisión cruzada), para que cada uno pueda explicar el proyecto completo.
-<<<<<<< HEAD
-=======
 - return; sin valor no se permite: después de return siempre debe haber una expresión.
-- El lenguaje no tiene operadores lógicos && y ||, ni comentarios, y los números son enteros de 64 bits (sin decimales).
-- Como el ; es opcional, una entrada como let x = 5 let y = 6; se acepta sin error.
->>>>>>> e90cecb ( Se agrega seccion 3 , 5 y 6  al diseño)
