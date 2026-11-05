@@ -68,12 +68,19 @@ El lexer no detiene la ejecución ante un error. Devuelve un token `Illegal` y e
 - `TokenType` es un `enum` (en Go eran cadenas), para que el compilador detecte tipos de token mal escritos.
 - `Token` es un `record` inmutable: un token no cambia después de creado.
 - Se agregaron comentarios `//`, que el proyecto base no soportaba.
+- Como en el proyecto base, solo `false` y `null` son falsos. `0`, `""` y `[]` son verdaderos. La regla está en un solo lugar (`Value.IsTruthy`) y la usan `if`, `while`, `for` y `!`.
+- Cada `Environment` tiene su diccionario de variables y una referencia al entorno de afuera. Para leer una variable se busca en el entorno actual y se sube hasta el global. `let` crea la variable en el ámbito actual. `=` busca hacia afuera y modifica la que ya existe. Solo las llamadas a función crean un ámbito nuevo.
+
 
 ## 6. Limitaciones conocidas
 
 - Solo hay números enteros (no decimales).
 - Las cadenas no admiten secuencias de escape (`\n`, `\"`).
 - No hay comentarios de varias líneas.
+- Los enteros son `long` de 64 bits y C# no revisa el desbordamiento. Un resultado demasiado grande da la vuelta sin aviso (por ejemplo, `2 ** 64` da `0` y `factorial(21)` da un número negativo).
+- Una recursión sin caso base (o con miles de niveles) agota la pila de .NET y cierra el programa (`StackOverflowException`), que no se puede atrapar como error del intérprete.
+- `if`, `while` y `for` no crean ámbito. Una variable declarada con `let` dentro de ellos (incluida la `i` de un `for`) sigue existiendo después.
+- No hay `&&` ni `||`, `**` no acepta exponentes negativos, las cadenas no se comparan con `<`/`>` ni se indexan, y los arreglos se comparan por referencia (`[1] == [1]` es `false`).
 
 ## 7. Uso de inteligencia artificial
 
