@@ -97,6 +97,7 @@ El lexer no detiene la ejecución ante un error. Devuelve un token `Illegal` y e
 - Como en el proyecto base, solo `false` y `null` son falsos. `0`, `""` y `[]` son verdaderos. La regla está en un solo lugar (`Value.IsTruthy`) y la usan `if`, `while`, `for` y `!`.
 - Cada `Environment` tiene su diccionario de variables y una referencia al entorno de afuera. Para leer una variable se busca en el entorno actual y se sube hasta el global. `let` crea la variable en el ámbito actual. `=` busca hacia afuera y modifica la que ya existe. Solo las llamadas a función crean un ámbito nuevo.
 
+
 ## Por que Pratt
 
 Parser de Pratt, no una función por nivel de la gramática. En un descenso recursivo clásico, cada nivel de precedencia exige su propia función (igualdad, suma, producto...), como en la gramática de arriba. Con Pratt, cada token tiene una función prefija o infija y cada operador infijo tiene un número de precedencia. Una sola función, ParseExpression, agrupa usando esos números. Así el parser tiene menos código repetido, y agregar un operador es una entrada en la tabla de precedencias más el registro de su función.
