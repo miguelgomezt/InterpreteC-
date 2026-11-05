@@ -61,6 +61,9 @@ public static class Evaluator
         PrefixExpr e     => EvalPrefix(e, EvalExpr(e.Right, env)),
         InfixExpr e      => EvalInfix(e, EvalExpr(e.Left, env), EvalExpr(e.Right, env)),
         AssignExpr e     => EvalAssign(e, env),
+        IfExpr e         => EvalIf(e, env),
+        WhileExpr e      => EvalWhile(e, env),
+        ForExpr e        => EvalFor(e, env),
         _ => throw Error(expr.Token, $"expresión no soportada: {expr.GetType().Name}")
     };
 
@@ -77,6 +80,39 @@ public static class Evaluator
             return value;
         }
         throw Error(e.Token, "solo se puede asignar a una variable o a arr[i]");
+    }
+
+        // ===== Control de flujo =====
+    private static Value EvalIf(IfExpr e, Environment env)
+    {
+        if (EvalExpr(e.Condition, env).IsTruthy)
+            return EvalBlock(e.Consequence, env);
+        if (e.Alternative is not null)
+            return EvalBlock(e.Alternative, env);   // aquí adentro puede venir otro IfExpr (elif)
+        return NullValue.Instance;
+    }
+
+    private static Value EvalWhile(WhileExpr e, Environment env)
+    {
+        while (EvalExpr(e.Condition, env).IsTruthy)
+        {
+            var result = EvalBlock(e.Body, env);
+            if (result is ReturnValue) return result;   // un return dentro del ciclo sale de la función
+        }
+        return NullValue.Instance;
+    }
+
+    private static Value EvalFor(ForExpr e, Environment env)
+    {
+        if (e.Init is not null) EvalStmt(e.Init, env);
+
+        while (e.Condition is null || EvalExpr(e.Condition, env).IsTruthy)
+        {
+            var result = EvalBlock(e.Body, env);
+            if (result is ReturnValue) return result;
+            if (e.Update is not null) EvalExpr(e.Update, env);
+        }
+        return NullValue.Instance;
     }
 
     // ===== Operadores =====
